@@ -2,15 +2,11 @@ SELECT
   s.StudentId,
   s.FirstName,
   s.LastName,
-  COALESCE(SUM(c.Credits), 0) AS TotalCreditsPassed
+  SUM(c.Credits) AS TotalCreditsPassed
 FROM Student s
-LEFT JOIN (
-  SELECT DISTINCT StudentId, CourseId
-  FROM Enrolment
-  WHERE Grade >= 40
-) p
-  ON p.StudentId = s.StudentId
-LEFT JOIN Course c
-  ON c.CourseId = p.CourseId
-GROUP BY s.StudentId, s.FirstName, s.LastName
-ORDER BY s.StudentId;
+JOIN Enrolment e
+  ON e.StudentId = s.StudentId
+JOIN Course c
+  ON c.CourseId = e.CourseId
+WHERE e.Grade >= 40
+GROUP BY s.StudentId, s.FirstName, s.LastName;
